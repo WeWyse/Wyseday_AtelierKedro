@@ -1,0 +1,8 @@
+jupyter
+ipykernel
+kedro
+pandas
+gcsfs
+gcloud
+s3fs
+snowflake-sqlalchemy
