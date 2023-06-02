@@ -29,10 +29,11 @@ def run_main(
   # Fit the model
   forest.fit(X_train, y_train)
 
-  #TODO: add code line to save model into pickle file using catalog
+  catalog.save("exemple_model", forest)
 
-  #TODO: add code line to load model into model variable using catalog
-  model = None
+
+  model = catalog.load("exemple_model")
+
 
   # Measure model performance
   y_pred = model.predict(X_test)
@@ -41,8 +42,10 @@ def run_main(
 
 if __name__ == "__main__":
 
-  #TODO: add datacalog instanciation and load my_catalog.yml into catalog variable
-  catalog=None
+  conf_loader = TemplatedConfigLoader("./conf", globals_pattern="*globals.yml")
+  conf_catalog = conf_loader.get("my_catalog.yml")
+
+  catalog = DataCatalog.from_config(conf_catalog)
 
   run_main(
     catalog=catalog

@@ -1,1 +1,4 @@
 #TODO add input and output filepaths global variables
+my_files:
+  local_path_input: input/
+  local_path_output: output/

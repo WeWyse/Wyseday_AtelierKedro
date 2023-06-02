@@ -29,7 +29,7 @@ def run_main(
         catalog: DataCatalog
 ):
 
-  input_df = None #TODO: add code line to read input data from the catalog
+  input_df = catalog.load("input_df")
 
   prices_by_liter = (input_df.copy()
       .pipe(sum_sales_by,
@@ -43,7 +43,7 @@ def run_main(
             )
   )
 
-  #TODO: add code line to save dataframe into output destination using catalog
+  catalog.save("gcp_output_df", prices_by_liter)
 
 if __name__ == "__main__":
 
@@ -51,9 +51,6 @@ if __name__ == "__main__":
   conf_catalog = conf_loader.get("my_catalog.yml")
 
   catalog = DataCatalog.from_config(conf_catalog)
-
-  #TODO: add datacalog instanciation and load my_catalog.yml into catalog variable
-  catalog=None
 
   run_main(
     catalog=catalog

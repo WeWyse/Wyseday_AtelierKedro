@@ -3,10 +3,117 @@
 # Documentation for this file format can be found in "The Data Catalog"
 # Link: https://kedro.readthedocs.io/en/stable/data/data_catalog.html
 
+# COMMON CONFIG
+
+#GCP
+# REUSABLE PARAMETERS
+_gcp_file_store_creds: &gcp_file_store_creds
+  token: ${gcp_file_store_creds.token}
+
+#AWS
+_s3_cred: &s3_cred
+  key: ${s3_cred.client_kwargs.aws_access_key_id}
+  secret: ${s3_cred.client_kwargs.aws_secret_access_key}
+
+# csv save
+_csv_save: &csv_save
+  type: pandas.CSVDataSet
+  save_args:
+    index: False
+    encoding: "utf-8"
+    sep: ','
+
+# csv load
+_csv_comma: &csv_comma
+  type: pandas.CSVDataSet
+  load_args:
+    sep: ','
+
+# csv save comma
+_csv_save_comma: &csv_save_comma
+  type: pandas.CSVDataSet
+  save_args:
+    index: False
+    encoding: "utf-8"
+    sep: ','
+
+# COMMON CONFIG
+_pkl: &pkl
+  type: pickle.PickleDataSet
+  backend: joblib
+
+# DATASETS
+input_df:
+  <<: *csv_comma
+  filepath: ${my_files.local_path_input}SELL_IN_DATA.csv
+
+output_df:
+  <<: *csv_save_comma
+  filepath: ${my_files.local_path_output}PRICES_BY_LITER.csv
 
 
-#TODO: add filesystems credentials variables
+exemple_model:
+  <<: *pkl
+  filepath: ${my_files.local_path_output}iris_model.pkl
 
-#TODO: add DataSet types definitions
+gcp_input_df:
+  <<: *csv_comma
+  filepath: gcs://kedro_bucket_wyseday/SELL_IN_DATA.csv
+  fs_args:
+    project: atelier-kedro-387721
+  credentials:
+    <<: *gcp_file_store_creds
 
-#TODO: add input and output files definitions
+
+gcp_output_df:
+  <<: *csv_save_comma
+  filepath: gcs://kedro_bucket_wyseday/PRICES_BY_LITER.csv
+  fs_args:
+    project: atelier-kedro-387721 #à changer à chaque fois
+  credentials:
+    <<: *gcp_file_store_creds
+
+# Load a CSV DataFrame on S3
+aws_input_df:
+  <<: *csv_comma
+  filepath: s3a://wyseday-bucket/atelier_kedro/SELL_IN_DATA.csv
+  credentials:
+    <<: *s3_cred
+
+aws_output_df:
+  <<: *csv_save_comma
+  filepath: s3a://wyseday-bucket/atelier_kedro/PRICES_BY_LITER.csv
+  credentials:
+    <<: *s3_cred
+
+
+
+
+
+##### For further testing
+# Connection string for SQLQueryDataSet doesn't need DB & SCHEMA info if they are specified in queries
+#_gc_query_connection_string: &sf_query_connection_string
+#  con: snowflake://${sf_user}:${sf_password}@hd68970-pernodricard_hq?warehouse=${my_files.sf_warehouse}&role=${my_files.sf_role}
+
+
+#big_query_input_exemple:
+#  type: pandas.GBQTableDataSet
+#  dataset: big_query_dataset
+#  table_name: big_query_table
+#  project: my-project
+#  credentials: gbq-creds
+#  load_args:
+#    reauth: True
+#    query: "Select col1, col2, col3 from project.dataset.table_name where col4 < 100"
+#  save_args:
+#    chunk_size: 100
+
+#exemple_table:
+#  type: pandas.SQLQueryDataSet
+#  filepath: ${my_files.path_sql}exemple_table.sql
+#  credentials:
+#    <<: *cred
+
+
+
+
